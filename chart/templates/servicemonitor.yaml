@@ -16,8 +16,3 @@ spec:
   namespaceSelector:
     matchNames:
     - {{  .Release.Namespace }}
-
-
-
-
-
