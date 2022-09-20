@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "prometheus-test-demo.fullname" . }}
+  labels:
+    app: {{ template "prometheus-test-demo.fullname" . }}
+    release: {{ .Release.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "prometheus-test-demo.fullname" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /actuator/prometheus
+        prometheus.io/port: "8998"
+        prometheus.io/scheme: http
+        prometheus.io/scrape: "true"
+      labels:
+        app: {{ template "prometheus-test-demo.fullname" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8998
+              protocol: TCP
+          resources:
+            limits:
+              cpu: "500m"
+              memory: 1Gi
+            requests:
+              cpu: "500m"
+              memory: 1Gi
